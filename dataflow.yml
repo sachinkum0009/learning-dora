@@ -3,7 +3,7 @@ nodes:
     build: cargo build --bin pub
     path: ./target/debug/pub
     inputs:
-      tick: dora/timer/millis/500
+      tick: dora/timer/millis/10
     outputs:
       - temperature
 

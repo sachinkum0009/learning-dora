@@ -1,46 +1,30 @@
-use dora_node_api::{
-    DoraNode, Event, EventStream, init_tracing,
-};
+use dora_cli::{build, run};
 use eyre::Context;
+use std::path::Path;
 
-#[tokio::main]
-async fn main() -> eyre::Result<()> {
-    let (node, events) = DoraNode::init_from_env()?;
+fn main() -> eyre::Result<()> {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    println!("{:?}", root);
+    std::env::set_current_dir(root.join(file!()).parent().unwrap())
+        .wrap_err("failed to set working dir")?;
 
-    let tracing_guard =
-        init_tracing(&node.id().clone(), node.dataflow_id()).context("failed to init tracing")?;
+    let args: Vec<String> = std::env::args().collect();
+    let dataflow = if args.len() > 1 {
+        args[1].clone()
+    } else {
+        root.join("dataflow.yml").to_string_lossy().into_owned()
+    };
+    println!("dataflow: {}", dataflow);
 
-    run(node, events).await?;
-    drop(tracing_guard);
-    Ok(())
-}
+    // build(dataflow.clone(), coordinator_addr, coordinator_port, uv, force_local)
 
-async fn run(_node: DoraNode, mut events: EventStream) -> eyre::Result<()> {
-    while let Some(event) = events.recv() {
-        match event {
-            Event::Input { id, metadata: _, data } => match id.as_ref() {
-                "temperature" => {
-                    let val = f64::try_from(&data).context("failed to parse temperature")?;
-                    tracing::info!("received temperature: {}", val);
-                }
-                other => tracing::error!("ignoring unexpected input: {other}"),
-            },
-            Event::Stop(_) => {
-                tracing::info!("received stop event, exiting");
-                break;
-            }
-            Event::InputClosed { id } => {
-                tracing::info!("input `{id}` was closed");
-                if *id == "temperature" {
-                    tracing::info!("`temperature` closed -> exiting");
-                    break;
-                }
-            }
-            other => {
-                tracing::info!("received unknown event: {other:?}");
-            }
-        }
-    }
+    // build(
+    //     dataflow: dataflow.clone(),
+    //     force_local: true,
+    //     ..Default::default()
+    // )?;
+
+    run(dataflow, false)?;
 
     Ok(())
 }
