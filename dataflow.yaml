@@ -1,0 +1,33 @@
+nodes:
+  - id: pub
+    build: cargo build --bin pub
+    path: ./target/debug/pub
+    inputs:
+      tick: dora/timer/millis/500
+    outputs:
+      - temperature
+
+  - id: sub
+    build: cargo build --bin sub
+    path: ./target/debug/sub
+    inputs:
+      temperature: pub/temperature
+
+# nodes:
+#   - id: pub
+#     build: cargo build --bin pub
+#     path: ./target/debug/pub
+#     inputs:
+#       tick: dora/timer/millis/500
+#     outputs:
+#       - random
+
+# - id: main
+#   build: cargo build --bin learning-dora
+#   path: ./target/debug/learning-dora
+#   inputs:
+#     tick: dora/timer/millis/500
+#     random: pub/random
+#   outputs:
+#     - status
+#     - triggered-exit

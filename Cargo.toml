@@ -1,0 +1,19 @@
+[package]
+name = "learning-dora"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dora-node-api = "0.5.0"
+eyre = "0.6.12"
+fastrand = "2.4.1"
+tokio = { version = "1.52.3", features = ["full"] }
+tracing = "0.1.44"
+
+[[bin]]
+name = "pub"
+path = "bin/pub.rs"
+
+[[bin]]
+name = "sub"
+path = "bin/sub.rs"
