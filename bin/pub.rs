@@ -1,6 +1,7 @@
 use dora_node_api::{
     DoraNode, Event, EventStream, IntoArrow, dora_core::config::DataId, init_tracing,
 };
+
 use eyre::Context;
 use tracing::info;
 
@@ -26,7 +27,11 @@ fn run(mut node: DoraNode, mut _events: EventStream) -> eyre::Result<()> {
     let temp: f64 = 42.0;
     while let Some(event) = _events.recv() {
         match event {
-            Event::Input { id, metadata: _, data: _ } => match id.as_ref() {
+            Event::Input {
+                id,
+                metadata: _,
+                data: _,
+            } => match id.as_ref() {
                 "tick" => {
                     info!("tick received");
                     node.send_output(output_id.clone(), Default::default(), temp.into_arrow())?;

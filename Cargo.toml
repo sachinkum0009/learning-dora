@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+arrow = "58.3.0"
 dora-cli = "0.5.0"
 dora-node-api = "0.5.0"
 eyre = "0.6.12"
