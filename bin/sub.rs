@@ -1,8 +1,7 @@
 use dora_node_api::{
-    DoraNode, Event, EventStream, IntoArrow, dora_core::config::DataId, init_tracing,
+    DoraNode, Event, EventStream, init_tracing,
 };
 use eyre::Context;
-use tracing::{Level, span};
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
@@ -16,10 +15,10 @@ async fn main() -> eyre::Result<()> {
     Ok(())
 }
 
-async fn run(mut node: DoraNode, mut events: EventStream) -> eyre::Result<()> {
+async fn run(_node: DoraNode, mut events: EventStream) -> eyre::Result<()> {
     while let Some(event) = events.recv() {
         match event {
-            Event::Input { id, metadata, data } => match id.as_ref() {
+            Event::Input { id, metadata: _, data } => match id.as_ref() {
                 "temperature" => {
                     let val = f64::try_from(&data).context("failed to parse temperature")?;
                     tracing::info!("received temperature: {}", val);
